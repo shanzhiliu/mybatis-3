@@ -24,6 +24,16 @@ import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.TransactionIsolationLevel;
 import org.apache.ibatis.transaction.Transaction;
 
+
+/**
+ *
+ * 让容器管理事务transaction的整个生命周期
+ * connection的获取延迟到getConnection()方法的调用
+ * 忽略所有的commit和rollback操作
+ * 默认情况下，可以关闭一个连接connection，也可以配置它不可以关闭一个连接
+ * 让容器来管理transaction的整个生命周期
+ * @see ManagedTransactionFactory
+ */
 /**
  * {@link Transaction} that lets the container manage the full lifecycle of the transaction.
  * Delays connection retrieval until getConnection() is called.

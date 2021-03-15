@@ -275,10 +275,14 @@ public class XMLConfigBuilder extends BaseBuilder {
       }
       for (XNode child : context.getChildren()) {
         String id = child.getStringAttribute("id");
+        //是和默认的环境相同时，解析之
         if (isSpecifiedEnvironment(id)) {
+          //1.解析<transactionManager>节点，决定创建什么类型的TransactionFactory
           TransactionFactory txFactory = transactionManagerElement(child.evalNode("transactionManager"));
+          //2. 创建dataSource
           DataSourceFactory dsFactory = dataSourceElement(child.evalNode("dataSource"));
           DataSource dataSource = dsFactory.getDataSource();
+          //3. 使用了Environment内置的构造器Builder，传递id 事务工厂TransactionFactory和数据源DataSource
           Environment.Builder environmentBuilder = new Environment.Builder(id)
               .transactionFactory(txFactory)
               .dataSource(dataSource);
@@ -311,6 +315,12 @@ public class XMLConfigBuilder extends BaseBuilder {
     if (context != null) {
       String type = context.getStringAttribute("type");
       Properties props = context.getChildrenAsProperties();
+      /*
+            在Configuration初始化的时候，会通过以下语句，给JDBC和MANAGED对应的工厂类
+            typeAliasRegistry.registerAlias("JDBC", JdbcTransactionFactory.class);
+            typeAliasRegistry.registerAlias("MANAGED", ManagedTransactionFactory.class);
+            下述的resolveClass(type).newInstance()会创建对应的工厂实例
+       */
       TransactionFactory factory = (TransactionFactory) resolveClass(type).newInstance();
       factory.setProperties(props);
       return factory;

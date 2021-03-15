@@ -37,10 +37,25 @@ public class JdbcTransactionFactory implements TransactionFactory {
   public void setProperties(Properties props) {
   }
 
+  /**
+   * 根据给定的数据库连接Connection创建Transaction
+   * @param conn Existing database connection
+   * @return
+   */
   @Override
   public Transaction newTransaction(Connection conn) {
     return new JdbcTransaction(conn);
   }
+
+
+/**
+ * 根据DataSource、隔离级别和是否自动提交创建Transacion
+ *
+ * @param ds
+ * @param level Desired isolation level
+ * @param autoCommit Desired autocommit
+ * @return
+ * */
 
   @Override
   public Transaction newTransaction(DataSource ds, TransactionIsolationLevel level, boolean autoCommit) {

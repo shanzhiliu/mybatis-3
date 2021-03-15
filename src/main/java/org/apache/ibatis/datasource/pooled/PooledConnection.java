@@ -32,8 +32,11 @@ class PooledConnection implements InvocationHandler {
   private static final Class<?>[] IFACES = new Class<?>[] { Connection.class };
 
   private final int hashCode;
+  //所创建它的datasource引用
   private final PooledDataSource dataSource;
+  //真正的Connection对象
   private final Connection realConnection;
+  //代理自己的代理Connection
   private final Connection proxyConnection;
   private long checkoutTimestamp;
   private long createdTimestamp;
@@ -232,6 +235,7 @@ class PooledConnection implements InvocationHandler {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     String methodName = method.getName();
+    //当调用关闭的时候，回收此Connection到PooledDataSource中
     if (CLOSE.hashCode() == methodName.hashCode() && CLOSE.equals(methodName)) {
       dataSource.pushConnection(this);
       return null;
